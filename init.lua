@@ -12,8 +12,8 @@ vim.api.nvim_command('let g:coq_settings = {"auto_start": "shut-up"}')
 
 ---- Keymappings ----
 vim.g.mapleader = ','
-vim.keymap.set({ 'n', 'i', 'c', 't' }, '<F13>', '<cmd>tabprevious<cr>')
-vim.keymap.set({ 'n', 'i', 'c', 't' }, '<F14>', '<cmd>tabnext<cr>')
+vim.keymap.set({ 'n', 'i', 'c', 't' }, '<F2>', '<cmd>tabprevious<cr>')
+vim.keymap.set({ 'n', 'i', 'c', 't' }, '<F4>', '<cmd>tabnext<cr>')
 
 ---- Set up lazy ----
 local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
@@ -110,7 +110,7 @@ require('lazy').setup({
 	{ 'mhartington/formatter.nvim' },
 })
 
-vim.keymap.set({ 'n', 'i', 'c', 't' }, '<F15>', '<cmd>Neotree float<cr>')
+vim.keymap.set({ 'n', 'i', 'c', 't' }, '<F3>', '<cmd>Neotree float<cr>')
 
 require('ts_context_commentstring').setup {}
 require('Comment').setup({
@@ -182,6 +182,7 @@ require('mason-tool-installer').setup {
 		'lua-language-server',
 		'luacheck',
 		'luaformatter',
+		'jdtls',
 	},
 }
 
