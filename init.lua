@@ -1,5 +1,5 @@
 ---- VIM Setup ----
-vim.api.nvim_command('filetype plugin indent off')
+-- vim.api.nvim_command('filetype plugin indent off')
 
 ---- Editor settings ----
 vim.opt.termguicolors = true
@@ -82,12 +82,13 @@ require('lazy').setup({
 		end,
 	},
 	{ 'sfztools/sfz.vim' },
+	{ 'mfussenegger/nvim-jdtls' },
 	{ 'sitiom/nvim-numbertoggle' },
 	{
 		'ms-jpq/coq_nvim',
 		branch = 'coq',
 		dependencies = {
-			{ 'ms-jpq/coq.artifacts', branch = 'artifacts' },
+			{ 'ms-jpq/coq.artifacts',  branch = 'artifacts' },
 			{ 'ms-jpq/coq.thirdparty', branch = '3p' },
 		},
 	},
@@ -107,10 +108,46 @@ require('lazy').setup({
 	{ 'mfussenegger/nvim-lint' },
 	{ url = 'https://gitlab.com/HiPhish/rainbow-delimiters.nvim.git' },
 	{ 'WhoIsSethDaniel/mason-tool-installer.nvim' },
-	{ 'mhartington/formatter.nvim' },
+	{
+		"stevearc/conform.nvim",
+		event = { "BufWritePre" },
+		cmd = { "ConformInfo" },
+		keys = {
+			{
+				-- Customize or remove this keymap to your liking
+				"<leader>f",
+				function()
+					require("conform").format({ async = true, lsp_fallback = true })
+				end,
+				mode = "",
+				desc = "Format buffer",
+			},
+		},
+		-- Everything in opts will be passed to setup()
+		opts = {
+			-- Define your formatters
+			formatters_by_ft = {
+				--lua = { "stylua" },
+				--python = { "isort", "black" },
+				--javascript = { { "prettierd", "prettier" } },
+			},
+			-- Set up format-on-save
+			--format_on_save = { timeout_ms = 500, lsp_fallback = true },
+			-- Customize formatters
+			formatters = {
+				shfmt = {
+					prepend_args = { "-i", "2" },
+				},
+			},
+		},
+		init = function()
+			-- If you want the formatexpr, here is the place to set it
+			vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
+		end,
+	}
 })
 
-vim.keymap.set({ 'n', 'i', 'c', 't' }, '<F3>', '<cmd>Neotree float<cr>')
+vim.keymap.set({ 'n', 'i', 'c', 't' }, '<F3>', '<cmd>Neotree float reveal<cr>')
 
 require('ts_context_commentstring').setup {}
 require('Comment').setup({
@@ -181,7 +218,6 @@ require('mason-tool-installer').setup {
 		'ltex-ls',
 		'lua-language-server',
 		'luacheck',
-		'luaformatter',
 		'jdtls',
 	},
 }
@@ -193,47 +229,6 @@ vim.api.nvim_create_autocmd({ 'BufWritePost' }, {
 		require('lint').try_lint()
 	end,
 })
-
--- Formatting
--- Utilities for creating configurations
-local util = require 'formatter.util'
-
--- Provides the Format, FormatWrite, FormatLock, and FormatWriteLock commands
-require('formatter').setup {
-	-- Enable or disable logging
-	logging = true,
-	-- Set the log level
-	log_level = vim.log.levels.WARN,
-	-- All formatter configurations are opt-in
-	filetype = {
-		-- Formatter configurations for filetype "lua" go here and will be executed in order
-		lua = {
-			function()
-				return {
-					exe = 'lua-format',
-					args = {
-						util.escape_path(util.get_current_buffer_file_path()),
-						'--indent-width=1',
-						'--use-tab',
-						'--no-keep-simple-control-block-one-line',
-						'--no-keep-simple-function-one-line',
-						'--chop-down-table',
-						'--extra-sep-at-table-end',
-						'--spaces-inside-table-braces',
-						'--double-quote-to-single-quote',
-					},
-					stdin = true,
-				}
-			end,
-		},
-
-		-- Use the special "*" filetype for defining formatter configurations on any filetype
-		['*'] = {
-			-- "formatter.filetypes.any" defines default configurations for any filetype
-			require('formatter.filetypes.any').remove_trailing_whitespace,
-		},
-	},
-}
 
 -- Python
 lspconfig.pyright.setup {}
@@ -254,5 +249,37 @@ lspconfig.clangd.setup {}
 -- Lua
 lspconfig.lua_ls.setup {}
 
--- Java
-lspconfig.jdtls.setup {}
+-- Global mappings.
+-- See `:help vim.diagnostic.*` for documentation on any of the below functions
+vim.keymap.set('n', '<space>e', vim.diagnostic.open_float)
+vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
+vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
+vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist)
+
+-- Use LspAttach autocommand to only map the following keys
+-- after the language server attaches to the current buffer
+vim.api.nvim_create_autocmd('LspAttach', {
+	group = vim.api.nvim_create_augroup('UserLspConfig', {}),
+	callback = function(ev)
+		-- Enable completion triggered by <c-x><c-o>
+		vim.bo[ev.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
+
+		-- Buffer local mappings.
+		-- See `:help vim.lsp.*` for documentation on any of the below functions
+		local opts = { buffer = ev.buf }
+		vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
+		vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+		vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+		vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
+		vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
+		vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, opts)
+		vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, opts)
+		vim.keymap.set('n', '<space>wl', function()
+			print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+		end, opts)
+		vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, opts)
+		vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, opts)
+		vim.keymap.set({ 'n', 'v' }, '<space>ca', vim.lsp.buf.code_action, opts)
+		vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+	end,
+})
