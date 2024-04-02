@@ -240,6 +240,7 @@ require('mason-tool-installer').setup {
 		'jdtls',
 		'rust-analyzer',
 		'json-lsp',
+		'arduino-language-server',
 	},
 }
 
@@ -272,6 +273,9 @@ lspconfig.lua_ls.setup {}
 
 -- JSON
 lspconfig.jsonls.setup {}
+
+-- Arduino
+lspconfig.arduino_language_server.setup {}
 
 -- Global mappings.
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
