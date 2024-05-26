@@ -43,7 +43,6 @@ require('lazy').setup({
 		{ 'fladson/vim-kitty' },
 		{
 			'nvim-treesitter/nvim-treesitter',
-			dependencies = { 'JoosepAlviste/nvim-ts-context-commentstring' },
 			build = ':TSUpdate',
 			config = function()
 				local configs = require('nvim-treesitter.configs')
@@ -67,13 +66,6 @@ require('lazy').setup({
 					indent = { enable = false },
 				})
 			end,
-		},
-		{
-			'numToStr/Comment.nvim',
-			opts = {
-				-- config here
-			},
-			lazy = false,
 		},
 		{
 			'iamcco/markdown-preview.nvim',
@@ -161,11 +153,6 @@ require('lazy').setup({
 )
 
 vim.keymap.set({ 'n', 'i', 'c', 't' }, '<F3>', '<cmd>Neotree float reveal<cr>')
-
-require('ts_context_commentstring').setup {}
-require('Comment').setup({
-	pre_hook = require('ts_context_commentstring.integrations.comment_nvim').create_pre_hook(),
-})
 
 ---- Colorscheme ----
 vim.cmd [[colorscheme nightfly]]
