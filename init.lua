@@ -34,143 +34,15 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-require('lazy').setup({
-		{
-			'nvim-neo-tree/neo-tree.nvim',
-			branch = 'v3.x',
-			dependencies = {
-				'nvim-lua/plenary.nvim',
-				'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
-				'MunifTanjim/nui.nvim',
-			},
-			opts = {
-				filesystem = {
-					filtered_items = {
-						visible = true,
-						show_hidden_count = true,
-						hide_dotfiles = false,
-						hide_gitignored = true,
-						hide_by_name = {
-							-- '.git',
-							-- '.DS_Store',
-							-- 'thumbs.db',
-						},
-						never_show = {},
-					},
-				}
-			}
-		},
-		{ 'lukas-reineke/indent-blankline.nvim', main = 'ibl', opts = {} },
-		{ 'fladson/vim-kitty' },
-		{
-			'nvim-treesitter/nvim-treesitter',
-			build = ':TSUpdate',
-			config = function()
-				local configs = require('nvim-treesitter.configs')
-				configs.setup({
-					ensure_installed = {
-						'c',
-						'lua',
-						'vim',
-						'vimdoc',
-						'query',
-						'elixir',
-						'heex',
-						'javascript',
-						'html',
-						'java',
-						'markdown_inline',
-						'rust',
-					},
-					sync_install = false,
-					highlight = { enable = true },
-					indent = { enable = false },
-				})
-			end,
-		},
-		{
-			'iamcco/markdown-preview.nvim',
-			ft = { 'markdown' },
-			build = function()
-				vim.fn['mkdp#util#install']()
-			end,
-		},
-		{ 'sfztools/sfz.vim' },
-		{ 'mfussenegger/nvim-jdtls' },
-		{ 'sitiom/nvim-numbertoggle' },
-		{
-			'ms-jpq/coq_nvim',
-			branch = 'coq',
-			dependencies = {
-				{ 'ms-jpq/coq.artifacts',  branch = 'artifacts' },
-				{ 'ms-jpq/coq.thirdparty', branch = '3p' },
-			},
-		},
-		{
-			'williamboman/mason.nvim',
-			dependencies = {
-				{ 'williamboman/mason-lspconfig.nvim' },
-				{ 'neovim/nvim-lspconfig' },
-			},
-		},
-		{
-			'bluz71/vim-nightfly-colors',
-			name = 'nightfly',
-			lazy = false,
-			priority = 1000,
-		},
-		{ 'mfussenegger/nvim-lint' },
-		{ url = 'https://gitlab.com/HiPhish/rainbow-delimiters.nvim.git' },
-		{ 'WhoIsSethDaniel/mason-tool-installer.nvim' },
-		{
-			"stevearc/conform.nvim",
-			event = { "BufWritePre" },
-			cmd = { "ConformInfo" },
-			keys = {
-				{
-					-- Customize or remove this keymap to your liking
-					"<leader>f",
-					function()
-						require("conform").format({ async = true, lsp_fallback = true })
-					end,
-					mode = "",
-					desc = "Format buffer",
-				},
-			},
-			-- Everything in opts will be passed to setup()
-			opts = {
-				-- Define your formatters
-				formatters_by_ft = {
-					--lua = { "stylua" },
-					--python = { "isort", "black" },
-					--javascript = { { "prettierd", "prettier" } },
-				},
-				-- Set up format-on-save
-				--format_on_save = { timeout_ms = 500, lsp_fallback = true },
-				-- Customize formatters
-				formatters = {
-					shfmt = {
-						prepend_args = { "-i", "2" },
-					},
-				},
-			},
-			init = function()
-				-- If you want the formatexpr, here is the place to set it
-				vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
-			end,
-		},
-		{
-			'mrcjkb/rustaceanvim',
-			version = '^4', -- Recommended
-			ft = { 'rust' },
-		},
+require('lazy').setup(
+	{
+		{ import = "plugins" },
 	},
 	{
 		dev = {
 			path = "~/git-repos/nvim-plugins/"
 		}
 	}
-
 )
 
 vim.keymap.set({ 'n', 'i', 'c', 't' }, '<F3>', '<cmd>Neotree float reveal<cr>')
