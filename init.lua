@@ -10,6 +10,11 @@ else
 end
 vim.api.nvim_command('let g:coq_settings = {"auto_start": "shut-up"}')
 
+-- Line wrapping
+vim.opt.wrap = true
+vim.opt.linebreak = true
+vim.opt.breakindent = true
+
 ---- Keymappings ----
 vim.g.mapleader = ','
 vim.keymap.set({ 'n', 'i', 'c', 't' }, '<F2>', '<cmd>tabprevious<cr>')
@@ -38,6 +43,22 @@ require('lazy').setup({
 				'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
 				'MunifTanjim/nui.nvim',
 			},
+			opts = {
+				filesystem = {
+					filtered_items = {
+						visible = true,
+						show_hidden_count = true,
+						hide_dotfiles = false,
+						hide_gitignored = true,
+						hide_by_name = {
+							-- '.git',
+							-- '.DS_Store',
+							-- 'thumbs.db',
+						},
+						never_show = {},
+					},
+				}
+			}
 		},
 		{ 'lukas-reineke/indent-blankline.nvim', main = 'ibl', opts = {} },
 		{ 'fladson/vim-kitty' },
