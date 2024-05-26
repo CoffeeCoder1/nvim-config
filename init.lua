@@ -151,12 +151,6 @@ require('lazy').setup({
 			version = '^4', -- Recommended
 			ft = { 'rust' },
 		},
-		{
-			'CoffeeCoder1/virtual-align.nvim',
-			opts = {},
-			dev = true,
-			lazy = false
-		},
 	},
 	{
 		dev = {
