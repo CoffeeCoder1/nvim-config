@@ -41,5 +41,8 @@ require('lazy').setup(
 		dev = {
 			path = '~/git-repos/nvim-plugins/',
 		},
+		change_detection = {
+			notify = false, -- get a notification when configuration changes are found
+		},
 	}
 )
