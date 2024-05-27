@@ -104,6 +104,7 @@ return {
 		opts = {
 			-- a list of all tools you want to ensure are installed upon start; they should be the names Mason uses for each tool
 			ensure_installed = {
+				'python-lsp-server',
 				'clangd',
 				'cpplint',
 				'cpptools',
