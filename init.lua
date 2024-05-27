@@ -8,7 +8,6 @@ if vim.bo.buftype == '' then
 else
 	vim.opt.number = false
 end
-vim.api.nvim_command('let g:coq_settings = {"auto_start": "shut-up"}')
 
 -- Line wrapping
 vim.opt.wrap = true
@@ -36,152 +35,11 @@ vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup(
 	{
-		{ import = "plugins" },
+		{ import = 'plugins' },
 	},
 	{
 		dev = {
-			path = "~/git-repos/nvim-plugins/"
-		}
+			path = '~/git-repos/nvim-plugins/',
+		},
 	}
 )
-
-vim.keymap.set({ 'n', 'i', 'c', 't' }, '<F3>', '<cmd>Neotree float reveal<cr>')
-
----- Colorscheme ----
-vim.cmd [[colorscheme nightfly]]
-
----- Indentation highlighting ----
-local highlight = {
-	'RainbowRed',
-	'RainbowYellow',
-	'RainbowBlue',
-	'RainbowOrange',
-	'RainbowGreen',
-	'RainbowViolet',
-	'RainbowCyan',
-}
-local hooks = require 'ibl.hooks'
--- create the highlight groups in the highlight setup hook, so they are reset every time the colorscheme changes
-hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
-	vim.api.nvim_set_hl(0, 'RainbowRed', { fg = '#E06C75' })
-	vim.api.nvim_set_hl(0, 'RainbowYellow', { fg = '#E5C07B' })
-	vim.api.nvim_set_hl(0, 'RainbowBlue', { fg = '#61AFEF' })
-	vim.api.nvim_set_hl(0, 'RainbowOrange', { fg = '#D19A66' })
-	vim.api.nvim_set_hl(0, 'RainbowGreen', { fg = '#98C379' })
-	vim.api.nvim_set_hl(0, 'RainbowViolet', { fg = '#C678DD' })
-	vim.api.nvim_set_hl(0, 'RainbowCyan', { fg = '#56B6C2' })
-end)
-
-require('ibl').setup {
-	indent = { highlight = highlight },
-	scope = { enabled = false },
-}
-
----- Rainbow Delimiters ----
-local rainbow_delimiters = require 'rainbow-delimiters'
-
-vim.g.rainbow_delimiters = {
-	strategy = {
-		[''] = rainbow_delimiters.strategy['global'],
-		vim = rainbow_delimiters.strategy['local'],
-	},
-	query = { [''] = 'rainbow-delimiters', lua = 'rainbow-blocks' },
-	highlight = {
-		'RainbowDelimiterRed',
-		'RainbowDelimiterYellow',
-		'RainbowDelimiterBlue',
-		'RainbowDelimiterOrange',
-		'RainbowDelimiterGreen',
-		'RainbowDelimiterViolet',
-		'RainbowDelimiterCyan',
-	},
-}
-
----- Language configuration ----
--- Language tools
-local lspconfig = require('lspconfig')
-require('mason').setup()
-require('mason-lspconfig').setup()
-require('mason-tool-installer').setup {
-	-- a list of all tools you want to ensure are installed upon start; they should be the names Mason uses for each tool
-	ensure_installed = {
-		'clangd',
-		'cpplint',
-		'cpptools',
-		'ltex-ls',
-		'lua-language-server',
-		'luacheck',
-		'jdtls',
-		'rust-analyzer',
-		'json-lsp',
-		'arduino-language-server',
-	},
-}
-
--- Linting
-require('lint').linters_by_ft = { cpp = { 'cpplint' } }
-vim.api.nvim_create_autocmd({ 'BufWritePost' }, {
-	callback = function()
-		require('lint').try_lint()
-	end,
-})
-
--- Python
-lspconfig.pyright.setup {}
-vim.api.nvim_create_autocmd({ 'Filetype' }, {
-	pattern = { 'python' },
-	callback = function(ev)
-		vim.api.nvim_command('setlocal autoindent noexpandtab tabstop=4 shiftwidth=4')
-	end,
-})
-
--- Markup
-lspconfig.ltex.setup {}
-vim.api.nvim_command('let g:markdown_fenced_languages = ["dart", "python", "ruby", "go"]')
-
--- C/C++
-lspconfig.clangd.setup {}
-
--- Lua
-lspconfig.lua_ls.setup {}
-
--- JSON
-lspconfig.jsonls.setup {}
-
--- Arduino
-lspconfig.arduino_language_server.setup {}
-
--- Global mappings.
--- See `:help vim.diagnostic.*` for documentation on any of the below functions
-vim.keymap.set('n', '<space>e', vim.diagnostic.open_float)
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
-vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist)
-
--- Use LspAttach autocommand to only map the following keys
--- after the language server attaches to the current buffer
-vim.api.nvim_create_autocmd('LspAttach', {
-	group = vim.api.nvim_create_augroup('UserLspConfig', {}),
-	callback = function(ev)
-		-- Enable completion triggered by <c-x><c-o>
-		vim.bo[ev.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
-
-		-- Buffer local mappings.
-		-- See `:help vim.lsp.*` for documentation on any of the below functions
-		local opts = { buffer = ev.buf }
-		vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
-		vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-		vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-		vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
-		vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
-		vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, opts)
-		vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, opts)
-		vim.keymap.set('n', '<space>wl', function()
-			print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-		end, opts)
-		vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, opts)
-		vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, opts)
-		vim.keymap.set({ 'n', 'v' }, '<space>ca', vim.lsp.buf.code_action, opts)
-		vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
-	end,
-})

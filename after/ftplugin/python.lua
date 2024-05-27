@@ -1,0 +1,1 @@
+vim.api.nvim_command('setlocal autoindent noexpandtab tabstop=4 shiftwidth=4')

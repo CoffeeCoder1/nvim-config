@@ -1,3 +1,6 @@
 return {
-	{ 'sfztools/sfz.vim' },
+	{
+		'sfztools/sfz.vim',
+		ft = 'sfz',
+	},
 }
