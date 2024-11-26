@@ -116,6 +116,7 @@ return {
 				'json-lsp',
 				'arduino-language-server',
 				'groovy-language-server',
+				'lemminx',
 			},
 		},
 	},
