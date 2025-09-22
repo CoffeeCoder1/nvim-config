@@ -7,7 +7,7 @@ return {
 		},
 		opts = function()
 			-- Get path to JDTLS from Mason
-			local jdtls_bin = require('mason-registry').get_package('jdtls'):get_install_path() .. '/jdtls'
+			local jdtls_bin = vim.fn.exepath('jdtls')
 
 			-- If you started neovim within `~/dev/xy/project-1` this would resolve to `project-1`
 			local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t')
