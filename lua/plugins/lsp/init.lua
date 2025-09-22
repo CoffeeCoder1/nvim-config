@@ -77,12 +77,12 @@ return {
 		end,
 	},
 	{
-		'williamboman/mason.nvim',
+		'mason-org/mason.nvim',
 		lazy = false,
 		opts = {},
 	},
 	{
-		'williamboman/mason-lspconfig.nvim',
+		'mason-org/mason-lspconfig.nvim',
 		opts = {
 			automatic_enable = {
 				-- Disable servers that are set up with a dedicated plugin (they are not initialized here to allow them to be lazy-loaded)
